@@ -178,14 +178,9 @@ while IFS= read -r -d '' lib; do
     PROJECT_LIBS+=("$lib")
 done < <(find "$CMAKE_BUILD_DIR" -name "*.a" -not -path "*/vcpkg_installed/*" -not -path "*/cpp/plugins/*" -print0)
 
-# Live2D/Cubism is built as a standalone static library and also depends on the
-# prebuilt Core archive from the SDK tree. These are not folded into
-# libengine_api.a, so add them explicitly for the final merged iOS archive.
+# Live2D/Cubism Core comes from the prebuilt SDK archive and must be added
+# explicitly for the final merged iOS archive.
 CUBISM_EXTRA_LIBS=()
-CUBISM_FW_LIB="$CMAKE_BUILD_DIR/cpp/plugins/libCubismFramework.a"
-if [[ -f "$CUBISM_FW_LIB" ]]; then
-    CUBISM_EXTRA_LIBS+=("$CUBISM_FW_LIB")
-fi
 
 if [[ "$BUILD_TYPE_LOWER" == "debug" && -f "$PROJECT_ROOT/cpp/plugins/cubism/Core/lib/ios/Debug-iphoneos/libLive2DCubismCore.a" ]]; then
     CUBISM_CORE_LIB="$PROJECT_ROOT/cpp/plugins/cubism/Core/lib/ios/Debug-iphoneos/libLive2DCubismCore.a"
