@@ -170,6 +170,26 @@ jobs:
           missing = [str(path) for path in required if not path.exists()]
           if missing:
               raise SystemExit("Cubism extraction incomplete: " + ", ".join(missing))
+
+          framework_root = target / "Framework"
+          framework_src = framework_root / "src"
+
+          # Project CMake adds only cpp/plugins/cubism/Framework to include paths,
+          # while the official SDK keeps public headers and subdirectories under
+          # Framework/src. Mirror src entries into Framework so existing include
+          # directives resolve without changing repository sources.
+          for item in framework_src.iterdir():
+              link_path = framework_root / item.name
+              if link_path.exists() or link_path.is_symlink():
+                  continue
+              try:
+                  os.symlink(item.name if item.parent == framework_root else f"src/{item.name}", link_path)
+              except OSError:
+                  if item.is_dir():
+                      shutil.copytree(item, link_path)
+                  else:
+                      shutil.copy2(item, link_path)
+
           print(f"Cubism SDK installed into {target}")
           PY
 
