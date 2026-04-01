@@ -584,9 +584,7 @@ private:
         mosaicRects_.clear();
         mosaicCpuScratch_.clear();
 
-        if (GetModel()) {
-            GetModel()->ClearDrawableForceHiddenFlags();
-        }
+        spdlog::warn("krkrlive2d: ClearDrawableForceHiddenFlags() not available in CubismSdkForNative-5-r.4.1");
         if (!GetModel() || !setting_) return;
 
         std::string userDataPath;
@@ -671,11 +669,7 @@ private:
     void UpdateMosaicPartOpacity() {
         if (!GetModel()) return;
         // Mosaic effect is disabled globally; always hide mosaic-tagged overlay meshes.
-        const bool hideSourceMesh = !mosaicEffectEnabled_ || IsMosaicEnabled();
-        for (csmInt32 drawableIndex : mosaicDrawableIndices_) {
-            if (drawableIndex < 0) continue;
-            GetModel()->SetDrawableForceHidden(drawableIndex, hideSourceMesh);
-        }
+        spdlog::warn("krkrlive2d: SetDrawableForceHidden() not available in CubismSdkForNative-5-r.4.1, mosaic source mesh hiding disabled");
 
         if (mosaicParentPartIndices_.empty()) return;
         for (csmInt32 partIndex : mosaicParentPartIndices_) {
