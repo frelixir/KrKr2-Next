@@ -97,13 +97,21 @@ jobs:
           restore-keys: |
             v2-${{ runner.os }}-pods-
 
-      - name: Restore vcpkg cache
+      - name: Restore vcpkg tool cache
         uses: actions/cache/restore@v4
         with:
           path: .devtools/vcpkg
           key: v3-${{ runner.os }}-vcpkg-ios-${{ hashFiles('vcpkg/**', 'CMakeLists.txt', 'CMakePresets.json', 'build/build_ios.sh', '.github/workflows/ios-build.yml') }}
           restore-keys: |
             v3-${{ runner.os }}-vcpkg-ios-
+
+      - name: Restore vcpkg binary cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.cache/vcpkg/archives
+          key: v1-${{ runner.os }}-vcpkg-bin-ios-${{ hashFiles('vcpkg/**', 'CMakeLists.txt', 'CMakePresets.json', 'build/build_ios.sh', '.github/workflows/ios-build.yml') }}
+          restore-keys: |
+            v1-${{ runner.os }}-vcpkg-bin-ios-
 
       - name: Restore ccache
         uses: actions/cache/restore@v4
@@ -244,7 +252,14 @@ jobs:
           path: out/ios
           key: v1-${{ runner.os }}-out-ios-${{ env.BUILD_TYPE }}-${{ github.sha }}
 
-      - name: Save vcpkg cache
+      - name: Save vcpkg binary cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.cache/vcpkg/archives
+          key: v1-${{ runner.os }}-vcpkg-bin-ios-${{ hashFiles('vcpkg/**', 'CMakeLists.txt', 'CMakePresets.json', 'build/build_ios.sh', '.github/workflows/ios-build.yml') }}
+
+      - name: Save vcpkg tool cache
         if: always()
         uses: actions/cache/save@v4
         with:
